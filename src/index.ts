@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 import { plugin } from "./plugin";
 import { users } from "./data";
+import { registerDTO } from "./module";
 
 // application
 const app = new Elysia();
@@ -33,20 +34,18 @@ const app = new Elysia();
 app.group("/user", (app) =>
   app
     .get("/list", () => users)
-    .get("/:id", ({ params: { id } }) => {
-      return users.filter((e) => e.id == +id);
-    })
+    .get(
+      "/:id",
+      ({ params: { id } }) => {
+        return users.filter((e) => e.id == +id);
+      },
+      {
+        params: t.Object({ id: t.Numeric() }),
+      }
+    )
     .post("/register", ({ body }) => body, {
-      body: t.Object({
-        username: t.String(),
-        email: t.String(),
-        password: t.String(),
-      }),
-      response: t.Object({
-        username: t.String(),
-        email: t.String(),
-        password: t.String(),
-      }),
+      body: registerDTO,
+      response: registerDTO,
     })
 );
 
